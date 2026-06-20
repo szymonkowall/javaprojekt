@@ -1,0 +1,11 @@
+pl.edu.wit.studentmanager.app
+pl.edu.wit.studentmanager.config
+pl.edu.wit.studentmanager.exception
+pl.edu.wit.studentmanager.i18n
+pl.edu.wit.studentmanager.model
+pl.edu.wit.studentmanager.persistence
+pl.edu.wit.studentmanager.service
+pl.edu.wit.studentmanager.ui
+pl.edu.wit.studentmanager.ui.dialog
+pl.edu.wit.studentmanager.ui.panel
+pl.edu.wit.studentmanager.ui.table
