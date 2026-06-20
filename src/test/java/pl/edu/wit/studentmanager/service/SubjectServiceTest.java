@@ -1,7 +1,11 @@
 package pl.edu.wit.studentmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
@@ -9,29 +13,19 @@ import pl.edu.wit.studentmanager.model.Student;
 import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.Subject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Testy przedmiotów i kryteriów.
- */
 class SubjectServiceTest {
 
-    /** Dane testowe. */
     private AppData data;
 
-    /** Testowany serwis. */
     private SubjectService service;
 
-    /** Przygotowuje test. */
     @BeforeEach
     void setUp() {
         data = new AppData();
         service = new SubjectService(data);
     }
 
-    /** Sprawdza dodanie przedmiotu i kryterium. */
     @Test
     void shouldAddSubjectAndCriterion() {
         Subject subject = service.addSubject("Język Java", "Opis");
@@ -40,7 +34,6 @@ class SubjectServiceTest {
         assertEquals(1, data.getCriteria().size());
     }
 
-    /** Sprawdza odrzucenie niedodatniego maksimum. */
     @Test
     void shouldRejectNonPositiveMaximum() {
         Subject subject = service.addSubject("Java", "");
@@ -50,7 +43,6 @@ class SubjectServiceTest {
         assertEquals("validation.criterion.maximum.positive", exception.getMessage());
     }
 
-    /** Sprawdza zakaz obniżenia maksimum poniżej istniejącego wyniku. */
     @Test
     void shouldRejectMaximumBelowExistingScore() {
         Subject subject = service.addSubject("Java", "");
@@ -65,7 +57,6 @@ class SubjectServiceTest {
         assertEquals("validation.criterion.maximum.belowExistingScore", exception.getMessage());
     }
 
-    /** Sprawdza kaskadowe usunięcie kryteriów i punktów przedmiotu. */
     @Test
     void shouldDeleteSubjectWithCriteriaAndScores() {
         Subject subject = service.addSubject("Java", "");

@@ -1,36 +1,30 @@
 package pl.edu.wit.studentmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.GroupAssignment;
 import pl.edu.wit.studentmanager.model.Student;
 import pl.edu.wit.studentmanager.model.StudentGroup;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Testy operacji na grupach.
- */
 class GroupServiceTest {
 
-    /** Dane testowe. */
     private AppData data;
 
-    /** Testowany serwis. */
     private GroupService service;
 
-    /** Przygotowuje test. */
     @BeforeEach
     void setUp() {
         data = new AppData();
         service = new GroupService(data);
     }
 
-    /** Sprawdza dodawanie grupy. */
     @Test
     void shouldAddGroup() {
         StudentGroup group = service.addGroup("WIT-1", "Inżynieria", "Opis");
@@ -38,7 +32,6 @@ class GroupServiceTest {
         assertEquals(1, data.getGroups().size());
     }
 
-    /** Sprawdza unikalność kodu grupy. */
     @Test
     void shouldRejectDuplicateGroupCode() {
         service.addGroup("WIT-1", "A", "");
@@ -48,7 +41,6 @@ class GroupServiceTest {
         assertEquals("validation.group.code.duplicate", exception.getMessage());
     }
 
-    /** Sprawdza aktualizację grupy. */
     @Test
     void shouldUpdateGroup() {
         StudentGroup group = service.addGroup("G1", "A", "X");
@@ -58,7 +50,6 @@ class GroupServiceTest {
         assertEquals("Y", group.getDescription());
     }
 
-    /** Sprawdza usunięcie przypisań do usuwanej grupy. */
     @Test
     void shouldDeleteGroupAssignments() {
         StudentGroup group = service.addGroup("G1", "A", "");

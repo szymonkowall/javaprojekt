@@ -1,37 +1,30 @@
 package pl.edu.wit.studentmanager.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import pl.edu.wit.studentmanager.exception.ValidationException;
-import pl.edu.wit.studentmanager.model.AppData;
-import pl.edu.wit.studentmanager.model.Student;
-import pl.edu.wit.studentmanager.model.StudentGroup;
-
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-/**
- * Testy przypisywania studentów do grup.
- */
+import pl.edu.wit.studentmanager.exception.ValidationException;
+import pl.edu.wit.studentmanager.model.AppData;
+import pl.edu.wit.studentmanager.model.Student;
+import pl.edu.wit.studentmanager.model.StudentGroup;
+
+
 class AssignmentServiceTest {
 
-    /** Dane testowe. */
     private AppData data;
 
-    /** Testowany serwis. */
     private AssignmentService service;
 
-    /** Student testowy. */
     private Student student;
 
-    /** Grupa testowa. */
     private StudentGroup group;
 
-    /** Przygotowuje obiekty testowe. */
     @BeforeEach
     void setUp() {
         data = new AppData();
@@ -42,7 +35,6 @@ class AssignmentServiceTest {
         data.getGroups().add(group);
     }
 
-    /** Sprawdza przypisanie studenta. */
     @Test
     void shouldAssignStudent() {
         service.assignStudent(student.getId(), group.getId());
@@ -50,7 +42,6 @@ class AssignmentServiceTest {
         assertEquals(group, service.findGroupForStudent(student.getId()).orElseThrow());
     }
 
-    /** Sprawdza zakaz podwójnego przypisania. */
     @Test
     void shouldRejectSecondAssignment() {
         service.assignStudent(student.getId(), group.getId());
@@ -60,7 +51,6 @@ class AssignmentServiceTest {
         assertEquals("validation.assignment.studentAlreadyAssigned", exception.getMessage());
     }
 
-    /** Sprawdza odrzucenie nieistniejącego studenta. */
     @Test
     void shouldRejectUnknownStudent() {
         ValidationException exception = assertThrows(
@@ -69,7 +59,6 @@ class AssignmentServiceTest {
         assertEquals("validation.student.notFound", exception.getMessage());
     }
 
-    /** Sprawdza usunięcie przypisania. */
     @Test
     void shouldUnassignStudent() {
         service.assignStudent(student.getId(), group.getId());

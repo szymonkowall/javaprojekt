@@ -1,7 +1,11 @@
 package pl.edu.wit.studentmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
@@ -9,28 +13,17 @@ import pl.edu.wit.studentmanager.model.Student;
 import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.Subject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Testy walidacji i operacji na punktach.
- */
 class ScoreServiceTest {
 
-    /** Dane testowe. */
     private AppData data;
 
-    /** Testowany serwis. */
     private ScoreService service;
 
-    /** Student testowy. */
     private Student student;
 
-    /** Kryterium testowe. */
     private AssessmentCriterion criterion;
 
-    /** Przygotowuje test. */
     @BeforeEach
     void setUp() {
         data = new AppData();
@@ -43,7 +36,6 @@ class ScoreServiceTest {
         data.getCriteria().add(criterion);
     }
 
-    /** Sprawdza akceptację zera i maksimum. */
     @Test
     void shouldAcceptBoundaryValues() {
         StudentScore zero = service.addScore(student.getId(), criterion.getId(), 0);
@@ -53,7 +45,6 @@ class ScoreServiceTest {
         assertEquals(20, maximum.getPoints());
     }
 
-    /** Sprawdza odrzucenie wartości ujemnej. */
     @Test
     void shouldRejectNegativePoints() {
         ValidationException exception = assertThrows(
@@ -62,7 +53,6 @@ class ScoreServiceTest {
         assertEquals("validation.score.nonNegative", exception.getMessage());
     }
 
-    /** Sprawdza odrzucenie wyniku powyżej maksimum. */
     @Test
     void shouldRejectPointsAboveMaximum() {
         ValidationException exception = assertThrows(
@@ -71,7 +61,6 @@ class ScoreServiceTest {
         assertEquals("validation.score.aboveMaximum", exception.getMessage());
     }
 
-    /** Sprawdza odrzucenie wartości NaN i nieskończonej. */
     @Test
     void shouldRejectNonFinitePoints() {
         assertThrows(ValidationException.class,
@@ -80,7 +69,6 @@ class ScoreServiceTest {
                 () -> service.addScore(student.getId(), criterion.getId(), Double.POSITIVE_INFINITY));
     }
 
-    /** Sprawdza zakaz drugiego wyniku dla tego samego kryterium. */
     @Test
     void shouldRejectDuplicateScore() {
         service.addScore(student.getId(), criterion.getId(), 10);
@@ -90,7 +78,6 @@ class ScoreServiceTest {
         assertEquals("validation.score.duplicate", exception.getMessage());
     }
 
-    /** Sprawdza edycję i usunięcie wyniku. */
     @Test
     void shouldUpdateAndDeleteScore() {
         StudentScore score = service.addScore(student.getId(), criterion.getId(), 10);

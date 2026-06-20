@@ -1,7 +1,11 @@
 package pl.edu.wit.studentmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
@@ -10,29 +14,19 @@ import pl.edu.wit.studentmanager.model.Student;
 import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.Subject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Testy operacji wykonywanych na studentach.
- */
 class StudentServiceTest {
 
-    /** Dane używane w testach. */
     private AppData data;
 
-    /** Testowany serwis. */
     private StudentService service;
 
-    /** Przygotowuje pusty zestaw danych przed każdym testem. */
     @BeforeEach
     void setUp() {
         data = new AppData();
         service = new StudentService(data);
     }
 
-    /** Sprawdza dodanie poprawnego studenta. */
     @Test
     void shouldAddStudent() {
         Student student = service.addStudent(" Jan ", " Kowalski ", " 12345 ");
@@ -42,7 +36,6 @@ class StudentServiceTest {
         assertEquals(1, data.getStudents().size());
     }
 
-    /** Sprawdza odrzucenie pustego imienia. */
     @Test
     void shouldRejectBlankFirstName() {
         ValidationException exception = assertThrows(
@@ -51,7 +44,6 @@ class StudentServiceTest {
         assertEquals("validation.student.firstName.required", exception.getMessage());
     }
 
-    /** Sprawdza unikalność numeru albumu bez rozróżniania wielkości liter. */
     @Test
     void shouldRejectDuplicateAlbumNumber() {
         service.addStudent("Jan", "Kowalski", "AbC123");
@@ -61,7 +53,6 @@ class StudentServiceTest {
         assertEquals("validation.student.album.duplicate", exception.getMessage());
     }
 
-    /** Sprawdza aktualizację studenta. */
     @Test
     void shouldUpdateStudent() {
         Student student = service.addStudent("Jan", "Kowalski", "123");
@@ -71,7 +62,6 @@ class StudentServiceTest {
         assertEquals("999", student.getAlbumNumber());
     }
 
-    /** Sprawdza kaskadowe usunięcie przypisań i punktów studenta. */
     @Test
     void shouldDeleteStudentWithAssignmentsAndScores() {
         Student student = service.addStudent("Jan", "Kowalski", "123");

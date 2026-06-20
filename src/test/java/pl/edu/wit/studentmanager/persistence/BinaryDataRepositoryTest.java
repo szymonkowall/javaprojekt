@@ -1,7 +1,15 @@
 package pl.edu.wit.studentmanager.persistence;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
 import pl.edu.wit.studentmanager.model.GroupAssignment;
@@ -10,24 +18,12 @@ import pl.edu.wit.studentmanager.model.StudentGroup;
 import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.Subject;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-/**
- * Testy binarnego zapisu i odczytu danych.
- */
 class BinaryDataRepositoryTest {
 
-    /** Katalog tymczasowy tworzony przez JUnit. */
     @TempDir
     Path temporaryDirectory;
 
-    /** Sprawdza pełny zapis i odczyt wraz z polskimi znakami i UUID. */
     @Test
     void shouldSaveAndLoadCompleteData() throws IOException {
         AppData original = createCompleteData();
@@ -40,7 +36,6 @@ class BinaryDataRepositoryTest {
         assertEquals(original, loaded);
     }
 
-    /** Sprawdza odrzucenie pliku o błędnej sygnaturze. */
     @Test
     void shouldRejectInvalidMagicNumber() throws IOException {
         Path file = temporaryDirectory.resolve("invalid.bin");
@@ -52,7 +47,6 @@ class BinaryDataRepositoryTest {
         assertThrows(IOException.class, () -> repository.load(file));
     }
 
-    /** Sprawdza odrzucenie nieobsługiwanej wersji. */
     @Test
     void shouldRejectUnsupportedVersion() throws IOException {
         Path file = temporaryDirectory.resolve("version.bin");
@@ -64,11 +58,7 @@ class BinaryDataRepositoryTest {
         assertThrows(IOException.class, () -> repository.load(file));
     }
 
-    /**
-     * Tworzy kompletny zestaw danych testowych.
-     *
-     * @return dane testowe
-     */
+
     private static AppData createCompleteData() {
         AppData data = new AppData();
         Student student = new Student("Łukasz", "Żółć", "000123");
