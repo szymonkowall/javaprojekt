@@ -1,0 +1,8 @@
+Członek zespołu  | Zrealizowane zadania w projekcie
+-----------------------------------------------------------------------------------------
+Szymon           | Logika biznesowa, model danych, zapis i odczyt plików (wielowątkowość)
+-----------------------------------------------------------------------------------------
+Michał           | Interfejs graficzny (SWING), obsługa wielojęzykowości, moduł szukania
+-----------------------------------------------------------------------------------------
+Stanisław        | Testy jednostkowe (JUnit), konfiguracja Maven, dokumentacja Javadoc
+-----------------------------------------------------------------------------------------
