@@ -1,5 +1,17 @@
 package pl.edu.wit.studentmanager.ui.panel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.i18n.Translatable;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
@@ -11,71 +23,38 @@ import pl.edu.wit.studentmanager.ui.dialog.SubjectDialog;
 import pl.edu.wit.studentmanager.ui.table.CriterionTableModel;
 import pl.edu.wit.studentmanager.ui.table.SubjectTableModel;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Window;
 
-/**
- * Panel zarządzania przedmiotami i kryteriami.
- */
 public final class SubjectPanel extends JPanel implements Translatable {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis przedmiotów. */
     private final SubjectService subjectService;
 
-    /** Funkcja odświeżenia wszystkich paneli. */
     private final Runnable refreshAllAction;
 
-    /** Model tabeli przedmiotów. */
     private final SubjectTableModel subjectModel;
 
-    /** Model tabeli kryteriów. */
     private final CriterionTableModel criterionModel;
 
-    /** Tabela przedmiotów. */
     private final JTable subjectTable;
 
-    /** Tabela kryteriów. */
     private final JTable criterionTable;
 
-    /** Przycisk dodawania przedmiotu. */
     private final JButton addSubjectButton = new JButton();
 
-    /** Przycisk edycji przedmiotu. */
     private final JButton editSubjectButton = new JButton();
 
-    /** Przycisk usuwania przedmiotu. */
     private final JButton deleteSubjectButton = new JButton();
 
-    /** Przycisk dodawania kryterium. */
     private final JButton addCriterionButton = new JButton();
 
-    /** Przycisk edycji kryterium. */
     private final JButton editCriterionButton = new JButton();
 
-    /** Przycisk usuwania kryterium. */
     private final JButton deleteCriterionButton = new JButton();
 
-    /**
-     * Tworzy panel przedmiotów.
-     *
-     * @param languageManager menedżer języka
-     * @param subjectService serwis przedmiotów
-     * @param refreshAllAction funkcja odświeżająca
-     */
+
     public SubjectPanel(
             LanguageManager languageManager,
             SubjectService subjectService,
@@ -91,7 +70,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         updateTexts();
     }
 
-    /** Buduje interfejs panelu. */
     private void buildInterface() {
         setLayout(new BorderLayout(8, 8));
         subjectTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -133,7 +111,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         deleteCriterionButton.addActionListener(event -> deleteCriterion());
     }
 
-    /** Otwiera dialog dodawania przedmiotu. */
     private void addSubject() {
         SubjectDialog dialog = new SubjectDialog(owner(), languageManager, subjectService, null);
         dialog.setVisible(true);
@@ -142,7 +119,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Otwiera dialog edycji przedmiotu. */
     private void editSubject() {
         Subject subject = selectedSubject(true);
         if (subject == null) {
@@ -155,7 +131,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Usuwa przedmiot. */
     private void deleteSubject() {
         Subject subject = selectedSubject(true);
         if (subject == null || !UiDialogs.confirm(
@@ -166,7 +141,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         refreshAllAction.run();
     }
 
-    /** Otwiera dialog dodawania kryterium. */
     private void addCriterion() {
         Subject subject = selectedSubject(true);
         if (subject == null) {
@@ -180,7 +154,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Otwiera dialog edycji kryterium. */
     private void editCriterion() {
         AssessmentCriterion criterion = selectedCriterion();
         if (criterion == null) {
@@ -195,7 +168,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Usuwa kryterium. */
     private void deleteCriterion() {
         AssessmentCriterion criterion = selectedCriterion();
         if (criterion == null || !UiDialogs.confirm(
@@ -206,12 +178,6 @@ public final class SubjectPanel extends JPanel implements Translatable {
         refreshAllAction.run();
     }
 
-    /**
-     * Zwraca wybrany przedmiot.
-     *
-     * @param showMessage czy pokazać komunikat przy braku wyboru
-     * @return przedmiot lub {@code null}
-     */
     private Subject selectedSubject(boolean showMessage) {
         int viewRow = subjectTable.getSelectedRow();
         if (viewRow < 0) {
@@ -223,11 +189,8 @@ public final class SubjectPanel extends JPanel implements Translatable {
         return subjectModel.getSubjectAt(subjectTable.convertRowIndexToModel(viewRow));
     }
 
-    /**
-     * Zwraca wybrane kryterium.
-     *
-     * @return kryterium lub {@code null}
-     */
+
+
     private AssessmentCriterion selectedCriterion() {
         int viewRow = criterionTable.getSelectedRow();
         if (viewRow < 0) {
@@ -237,22 +200,16 @@ public final class SubjectPanel extends JPanel implements Translatable {
         return criterionModel.getCriterionAt(criterionTable.convertRowIndexToModel(viewRow));
     }
 
-    /**
-     * Zwraca okno nadrzędne panelu.
-     *
-     * @return okno nadrzędne
-     */
+
     private Window owner() {
         return SwingUtilities.getWindowAncestor(this);
     }
 
-    /** Odświeża obie tabele. */
     public void refreshData() {
         subjectModel.refresh();
         criterionModel.setSubjectId(null);
     }
 
-    /** Aktualizuje teksty. */
     @Override
     public void updateTexts() {
         addSubjectButton.setText(languageManager.get("button.addSubject"));

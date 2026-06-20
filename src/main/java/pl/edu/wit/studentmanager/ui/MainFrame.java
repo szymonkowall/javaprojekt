@@ -32,65 +32,44 @@ import pl.edu.wit.studentmanager.ui.panel.SearchPanel;
 import pl.edu.wit.studentmanager.ui.panel.StudentPanel;
 import pl.edu.wit.studentmanager.ui.panel.SubjectPanel;
 
-/**
- * Główne okno aplikacji, które łączy wszystkie panele funkcjonalne.
- */
+
 public final class MainFrame extends JFrame implements Translatable {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Konfiguracja aplikacji. */
     private final AppConfig config;
 
-    /** Wspólny kontener danych. */
     private final AppData data;
 
-    /** Serwis operacji plikowych. */
     private final PersistenceService persistenceService;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Panel studentów. */
     private final StudentPanel studentPanel;
 
-    /** Panel grup. */
     private final GroupPanel groupPanel;
 
-    /** Panel przedmiotów. */
     private final SubjectPanel subjectPanel;
 
-    /** Panel punktów. */
     private final ScorePanel scorePanel;
 
-    /** Panel wyszukiwania. */
     private final SearchPanel searchPanel;
 
-    /** Zakładki głównego okna. */
     private final JTabbedPane tabs = new JTabbedPane();
 
-    /** Przycisk zapisu. */
     private final JButton saveButton = new JButton();
 
-    /** Przycisk odczytu. */
     private final JButton loadButton = new JButton();
 
-    /** Etykieta języka. */
     private final JLabel languageLabel = new JLabel();
 
-    /** Lista wyboru języka. */
     private final JComboBox<String> languageCombo = new JComboBox<>();
 
-    /** Etykieta stanu operacji plikowej. */
     private final JLabel statusLabel = new JLabel(" ");
 
-    /** Znacznik blokujący obsługę zdarzeń podczas przebudowy listy języków. */
     private boolean updatingLanguageCombo;
 
-    /**
-     * Tworzy główne okno aplikacji.
-     */
+
     public MainFrame(
             AppConfig config,
             AppData data,
@@ -125,7 +104,6 @@ public final class MainFrame extends JFrame implements Translatable {
         setLocationRelativeTo(null);
     }
 
-    /** Buduje układ głównego okna. */
     private void buildInterface() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(8, 8));
@@ -146,7 +124,6 @@ public final class MainFrame extends JFrame implements Translatable {
         add(tabs, BorderLayout.CENTER);
     }
 
-    /** Rejestruje zdarzenia przycisków i języka. */
     private void registerEvents() {
         saveButton.addActionListener(event -> chooseAndSave());
         loadButton.addActionListener(event -> chooseAndLoad());
@@ -166,7 +143,6 @@ public final class MainFrame extends JFrame implements Translatable {
         });
     }
 
-    /** Otwiera wybór pliku i rozpoczyna zapis. */
     private void chooseAndSave() {
         JFileChooser chooser = createFileChooser();
         chooser.setSelectedFile(Path.of(config.getDefaultDataFile()).toFile());
@@ -188,7 +164,6 @@ public final class MainFrame extends JFrame implements Translatable {
         );
     }
 
-    /** Otwiera wybór pliku i rozpoczyna odczyt. */
     private void chooseAndLoad() {
         JFileChooser chooser = createFileChooser();
         chooser.setSelectedFile(Path.of(config.getDefaultDataFile()).toFile());
@@ -211,7 +186,6 @@ public final class MainFrame extends JFrame implements Translatable {
         );
     }
 
-    /** Tworzy skonfigurowany wybór pliku binarnego. */
     private JFileChooser createFileChooser() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter(
@@ -228,7 +202,6 @@ public final class MainFrame extends JFrame implements Translatable {
         return path.resolveSibling(fileName + ".bin");
     }
 
-    /** Włącza lub wyłącza stan operacji plikowej. */
     private void setFileOperationInProgress(boolean inProgress) {
         saveButton.setEnabled(!inProgress);
         loadButton.setEnabled(!inProgress);
@@ -236,7 +209,6 @@ public final class MainFrame extends JFrame implements Translatable {
                 ? languageManager.get("message.operation.inProgress") : " ");
     }
 
-/** Odświeża dane wszystkich paneli. */
     public void refreshAll() {
         studentPanel.refreshData();
         groupPanel.refreshData();
@@ -245,7 +217,6 @@ public final class MainFrame extends JFrame implements Translatable {
         searchPanel.refreshData(); // Zmień z refreshPanel() z powrotem na refreshData()
     }
 
-    /** Aktualizuje wszystkie teksty głównego okna. */
     @Override
     public void updateTexts() {
         setTitle(languageManager.get("app.title"));

@@ -1,5 +1,9 @@
 package pl.edu.wit.studentmanager.ui.table;
 
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
@@ -8,36 +12,20 @@ import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.Subject;
 import pl.edu.wit.studentmanager.service.ScoreService;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.List;
 
-/**
- * Model tabeli punktów studentów.
- */
 public final class ScoreTableModel extends AbstractTableModel {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Wspólne dane aplikacji. */
     private final AppData data;
 
-    /** Serwis punktów. */
     private final ScoreService scoreService;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Aktualne wiersze. */
     private List<StudentScore> rows = List.of();
 
-    /**
-     * Tworzy model tabeli wyników.
-     *
-     * @param data dane aplikacji
-     * @param scoreService serwis wyników
-     * @param languageManager menedżer języka
-     */
+
     public ScoreTableModel(
             AppData data,
             ScoreService scoreService,
@@ -48,45 +36,31 @@ public final class ScoreTableModel extends AbstractTableModel {
         refresh();
     }
 
-    /** Odświeża dane. */
     public void refresh() {
         rows = scoreService.getAllScores();
         fireTableDataChanged();
     }
 
-    /** Odświeża nagłówki. */
     public void refreshLanguage() {
         fireTableStructureChanged();
     }
 
-    /**
-     * Zwraca wynik z wiersza.
-     *
-     * @param rowIndex indeks wiersza
-     * @return wynik
-     */
+
     public StudentScore getScoreAt(int rowIndex) {
         return rows.get(rowIndex);
     }
 
-    /** @return liczba wierszy */
     @Override
     public int getRowCount() {
         return rows.size();
     }
 
-    /** @return liczba kolumn */
     @Override
     public int getColumnCount() {
         return 5;
     }
 
-    /**
-     * Zwraca nazwę kolumny.
-     *
-     * @param column indeks kolumny
-     * @return nazwa
-     */
+
     @Override
     public String getColumnName(int column) {
         return switch (column) {
@@ -99,13 +73,8 @@ public final class ScoreTableModel extends AbstractTableModel {
         };
     }
 
-    /**
-     * Zwraca wartość komórki.
-     *
-     * @param rowIndex indeks wiersza
-     * @param columnIndex indeks kolumny
-     * @return wartość
-     */
+
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         StudentScore score = rows.get(rowIndex);
@@ -129,7 +98,6 @@ public final class ScoreTableModel extends AbstractTableModel {
         };
     }
 
-    /** @return zawsze {@code false} */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;

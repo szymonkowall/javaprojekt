@@ -1,40 +1,28 @@
 package pl.edu.wit.studentmanager.ui.table;
 
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.model.Student;
 import pl.edu.wit.studentmanager.service.AssignmentService;
 import pl.edu.wit.studentmanager.service.StudentService;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.List;
 
-/**
- * Model tabeli studentów.
- */
 public final class StudentTableModel extends AbstractTableModel {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Serwis studentów. */
     private final StudentService studentService;
 
-    /** Serwis przypisań do grup. */
     private final AssignmentService assignmentService;
 
-    /** Menedżer tłumaczeń. */
     private final LanguageManager languageManager;
 
-    /** Aktualne wiersze tabeli. */
     private List<Student> rows = List.of();
 
-    /**
-     * Tworzy model tabeli.
-     *
-     * @param studentService serwis studentów
-     * @param assignmentService serwis przypisań
-     * @param languageManager menedżer języka
-     */
+
     public StudentTableModel(
             StudentService studentService,
             AssignmentService assignmentService,
@@ -45,49 +33,33 @@ public final class StudentTableModel extends AbstractTableModel {
         refresh();
     }
 
-    /**
-     * Odświeża dane tabeli.
-     */
+
     public void refresh() {
         rows = studentService.getAllStudents();
         fireTableDataChanged();
     }
 
-    /**
-     * Odświeża nagłówki po zmianie języka.
-     */
+
     public void refreshLanguage() {
         fireTableStructureChanged();
     }
 
-    /**
-     * Zwraca studenta z wybranego wiersza.
-     *
-     * @param rowIndex indeks wiersza
-     * @return student
-     */
+
     public Student getStudentAt(int rowIndex) {
         return rows.get(rowIndex);
     }
 
-    /** @return liczba wierszy */
     @Override
     public int getRowCount() {
         return rows.size();
     }
 
-    /** @return liczba kolumn */
     @Override
     public int getColumnCount() {
         return 4;
     }
 
-    /**
-     * Zwraca nazwę kolumny.
-     *
-     * @param column indeks kolumny
-     * @return przetłumaczona nazwa
-     */
+
     @Override
     public String getColumnName(int column) {
         return switch (column) {
@@ -99,13 +71,7 @@ public final class StudentTableModel extends AbstractTableModel {
         };
     }
 
-    /**
-     * Zwraca wartość komórki.
-     *
-     * @param rowIndex indeks wiersza
-     * @param columnIndex indeks kolumny
-     * @return wartość komórki
-     */
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Student student = rows.get(rowIndex);
@@ -120,13 +86,7 @@ public final class StudentTableModel extends AbstractTableModel {
         };
     }
 
-    /**
-     * Wyłącza bezpośrednią edycję komórek.
-     *
-     * @param rowIndex indeks wiersza
-     * @param columnIndex indeks kolumny
-     * @return zawsze {@code false}
-     */
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;

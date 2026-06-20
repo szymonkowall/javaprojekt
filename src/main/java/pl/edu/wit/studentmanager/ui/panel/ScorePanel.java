@@ -1,5 +1,16 @@
 package pl.edu.wit.studentmanager.ui.panel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.i18n.Translatable;
 import pl.edu.wit.studentmanager.model.AppData;
@@ -10,63 +21,32 @@ import pl.edu.wit.studentmanager.ui.UiDialogs;
 import pl.edu.wit.studentmanager.ui.dialog.ScoreDialog;
 import pl.edu.wit.studentmanager.ui.table.ScoreTableModel;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Window;
 
-/**
- * Panel wprowadzania i edycji punktów.
- */
 public final class ScorePanel extends JPanel implements Translatable {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Dane aplikacji. */
     private final AppData data;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis wyników. */
     private final ScoreService scoreService;
 
-    /** Serwis przedmiotów. */
     private final SubjectService subjectService;
 
-    /** Funkcja odświeżająca. */
     private final Runnable refreshAllAction;
 
-    /** Model tabeli. */
     private final ScoreTableModel tableModel;
 
-    /** Tabela wyników. */
     private final JTable table;
 
-    /** Przycisk dodawania wyniku. */
     private final JButton addButton = new JButton();
 
-    /** Przycisk edycji wyniku. */
     private final JButton editButton = new JButton();
 
-    /** Przycisk usuwania wyniku. */
     private final JButton deleteButton = new JButton();
 
-    /**
-     * Tworzy panel wyników.
-     *
-     * @param data dane aplikacji
-     * @param languageManager menedżer języka
-     * @param scoreService serwis wyników
-     * @param subjectService serwis przedmiotów
-     * @param refreshAllAction funkcja odświeżająca
-     */
+
     public ScorePanel(
             AppData data,
             LanguageManager languageManager,
@@ -84,7 +64,6 @@ public final class ScorePanel extends JPanel implements Translatable {
         updateTexts();
     }
 
-    /** Buduje interfejs. */
     private void buildInterface() {
         setLayout(new BorderLayout(8, 8));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -102,7 +81,6 @@ public final class ScorePanel extends JPanel implements Translatable {
         deleteButton.addActionListener(event -> deleteScore());
     }
 
-    /** Otwiera dialog dodawania wyniku. */
     private void addScore() {
         if (data.getStudents().isEmpty()) {
             UiDialogs.showInformation(this, languageManager, "message.no.students");
@@ -120,7 +98,6 @@ public final class ScorePanel extends JPanel implements Translatable {
         }
     }
 
-    /** Otwiera dialog edycji wyniku. */
     private void editScore() {
         StudentScore score = selectedScore();
         if (score == null) {
@@ -134,7 +111,6 @@ public final class ScorePanel extends JPanel implements Translatable {
         }
     }
 
-    /** Usuwa wynik. */
     private void deleteScore() {
         StudentScore score = selectedScore();
         if (score == null || !UiDialogs.confirm(
@@ -145,11 +121,7 @@ public final class ScorePanel extends JPanel implements Translatable {
         refreshAllAction.run();
     }
 
-    /**
-     * Zwraca wybrany wynik.
-     *
-     * @return wynik lub {@code null}
-     */
+
     private StudentScore selectedScore() {
         int viewRow = table.getSelectedRow();
         if (viewRow < 0) {
@@ -159,21 +131,15 @@ public final class ScorePanel extends JPanel implements Translatable {
         return tableModel.getScoreAt(table.convertRowIndexToModel(viewRow));
     }
 
-    /**
-     * Zwraca okno nadrzędne panelu.
-     *
-     * @return okno nadrzędne
-     */
+
     private Window owner() {
         return SwingUtilities.getWindowAncestor(this);
     }
 
-    /** Odświeża tabelę. */
     public void refreshData() {
         tableModel.refresh();
     }
 
-    /** Aktualizuje teksty. */
     @Override
     public void updateTexts() {
         addButton.setText(languageManager.get("button.add"));

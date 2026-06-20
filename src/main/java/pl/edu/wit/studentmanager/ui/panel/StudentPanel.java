@@ -1,5 +1,16 @@
 package pl.edu.wit.studentmanager.ui.panel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Window;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.i18n.Translatable;
@@ -12,69 +23,36 @@ import pl.edu.wit.studentmanager.ui.dialog.AssignmentDialog;
 import pl.edu.wit.studentmanager.ui.dialog.StudentDialog;
 import pl.edu.wit.studentmanager.ui.table.StudentTableModel;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Window;
-import javax.swing.SwingUtilities;
 
-/**
- * Panel ewidencji studentów i przypisań do grup.
- */
 public final class StudentPanel extends JPanel implements Translatable {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis studentów. */
     private final StudentService studentService;
 
-    /** Serwis grup. */
     private final GroupService groupService;
 
-    /** Serwis przypisań. */
     private final AssignmentService assignmentService;
 
-    /** Funkcja odświeżająca wszystkie panele. */
     private final Runnable refreshAllAction;
 
-    /** Model tabeli studentów. */
     private final StudentTableModel tableModel;
 
-    /** Tabela studentów. */
     private final JTable table;
 
-    /** Przycisk dodawania. */
     private final JButton addButton = new JButton();
 
-    /** Przycisk edycji. */
     private final JButton editButton = new JButton();
 
-    /** Przycisk usuwania. */
     private final JButton deleteButton = new JButton();
 
-    /** Przycisk przypisania. */
     private final JButton assignButton = new JButton();
 
-    /** Przycisk usunięcia przypisania. */
     private final JButton unassignButton = new JButton();
 
-    /**
-     * Tworzy panel studentów.
-     *
-     * @param languageManager menedżer języka
-     * @param studentService serwis studentów
-     * @param groupService serwis grup
-     * @param assignmentService serwis przypisań
-     * @param refreshAllAction funkcja odświeżająca całą aplikację
-     */
+
     public StudentPanel(
             LanguageManager languageManager,
             StudentService studentService,
@@ -92,7 +70,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         updateTexts();
     }
 
-    /** Buduje interfejs panelu. */
     private void buildInterface() {
         setLayout(new BorderLayout(8, 8));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -114,7 +91,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         unassignButton.addActionListener(event -> unassignStudent());
     }
 
-    /** Otwiera formularz dodawania studenta. */
     private void addStudent() {
         StudentDialog dialog = new StudentDialog(
                 owner(), languageManager, studentService, null);
@@ -124,7 +100,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Otwiera formularz edycji studenta. */
     private void editStudent() {
         Student student = selectedStudent();
         if (student == null) {
@@ -138,7 +113,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Usuwa wybranego studenta po potwierdzeniu. */
     private void deleteStudent() {
         Student student = selectedStudent();
         if (student == null || !UiDialogs.confirm(
@@ -149,7 +123,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         refreshAllAction.run();
     }
 
-    /** Przypisuje wybranego studenta do grupy. */
     private void assignStudent() {
         Student student = selectedStudent();
         if (student == null) {
@@ -167,7 +140,6 @@ public final class StudentPanel extends JPanel implements Translatable {
         }
     }
 
-    /** Usuwa przypisanie wybranego studenta. */
     private void unassignStudent() {
         Student student = selectedStudent();
         if (student == null || !UiDialogs.confirm(
@@ -182,11 +154,7 @@ public final class StudentPanel extends JPanel implements Translatable {
         }
     }
 
-    /**
-     * Zwraca wybranego studenta albo pokazuje komunikat.
-     *
-     * @return student lub {@code null}
-     */
+
     private Student selectedStudent() {
         int viewRow = table.getSelectedRow();
         if (viewRow < 0) {
@@ -196,21 +164,15 @@ public final class StudentPanel extends JPanel implements Translatable {
         return tableModel.getStudentAt(table.convertRowIndexToModel(viewRow));
     }
 
-    /**
-     * Zwraca okno nadrzędne panelu.
-     *
-     * @return okno
-     */
+
     private Window owner() {
         return SwingUtilities.getWindowAncestor(this);
     }
 
-    /** Odświeża dane tabeli. */
     public void refreshData() {
         tableModel.refresh();
     }
 
-    /** Aktualizuje teksty panelu. */
     @Override
     public void updateTexts() {
         addButton.setText(languageManager.get("button.add"));

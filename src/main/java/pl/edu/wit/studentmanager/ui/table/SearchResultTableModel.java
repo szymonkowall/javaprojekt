@@ -1,67 +1,47 @@
 package pl.edu.wit.studentmanager.ui.table;
 
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.model.StudentSearchResult;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.List;
 
-/**
- * Model tabeli wyników wyszukiwania.
- */
 public final class SearchResultTableModel extends AbstractTableModel {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Aktualne wyniki. */
     private List<StudentSearchResult> rows = List.of();
 
-    /**
-     * Tworzy model wyników wyszukiwania.
-     *
-     * @param languageManager menedżer języka
-     */
+
     public SearchResultTableModel(LanguageManager languageManager) {
         this.languageManager = languageManager;
     }
 
-    /**
-     * Ustawia nowe wyniki.
-     *
-     * @param rows nowe wiersze
-     */
+
     public void setRows(List<StudentSearchResult> rows) {
         this.rows = List.copyOf(rows);
         fireTableDataChanged();
     }
 
-    /** Odświeża nagłówki. */
     public void refreshLanguage() {
         fireTableStructureChanged();
     }
 
-    /** @return liczba wierszy */
     @Override
     public int getRowCount() {
         return rows.size();
     }
 
-    /** @return liczba kolumn */
     @Override
     public int getColumnCount() {
         return 7;
     }
 
-    /**
-     * Zwraca nazwę kolumny.
-     *
-     * @param column indeks kolumny
-     * @return nazwa
-     */
+
     @Override
     public String getColumnName(int column) {
         return switch (column) {
@@ -76,13 +56,7 @@ public final class SearchResultTableModel extends AbstractTableModel {
         };
     }
 
-    /**
-     * Zwraca wartość komórki.
-     *
-     * @param rowIndex indeks wiersza
-     * @param columnIndex indeks kolumny
-     * @return wartość
-     */
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         StudentSearchResult result = rows.get(rowIndex);
@@ -98,7 +72,6 @@ public final class SearchResultTableModel extends AbstractTableModel {
         };
     }
 
-    /** @return zawsze {@code false} */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
