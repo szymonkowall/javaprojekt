@@ -1,5 +1,12 @@
 package pl.edu.wit.studentmanager.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+
 import pl.edu.wit.studentmanager.model.AppData;
 import pl.edu.wit.studentmanager.model.AssessmentCriterion;
 import pl.edu.wit.studentmanager.model.Student;
@@ -8,37 +15,17 @@ import pl.edu.wit.studentmanager.model.StudentScore;
 import pl.edu.wit.studentmanager.model.StudentSearchResult;
 import pl.edu.wit.studentmanager.model.Subject;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
-/**
- * Wyszukuje studentów, przedmioty, kryteria i zdobyte punkty.
- */
 public final class SearchService {
 
-    /** Wspólny kontener danych aplikacji. */
     private final AppData data;
 
-    /**
-     * Tworzy serwis wyszukiwania.
-     *
-     * @param data dane aplikacji
-     */
+
     public SearchService(AppData data) {
         this.data = Objects.requireNonNull(data, "Dane nie mogą być puste.");
     }
 
-    /**
-     * Wyszukuje dane bez rozróżniania wielkości liter.
-     * Pusty tekst zwraca wszystkie rekordy.
-     *
-     * @param query tekst wyszukiwania
-     * @return wiersze wyników
-     */
+
     public List<StudentSearchResult> search(String query) {
         String normalizedQuery = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
         List<StudentSearchResult> results = new ArrayList<>();
@@ -89,12 +76,7 @@ public final class SearchService {
                 .toList();
     }
 
-    /**
-     * Wyszukuje grupę studenta.
-     *
-     * @param student student
-     * @return opcjonalna grupa
-     */
+
     private Optional<StudentGroup> findGroup(Student student) {
         return data.getAssignments().stream()
                 .filter(assignment -> assignment.getStudentId().equals(student.getId()))
@@ -104,37 +86,21 @@ public final class SearchService {
                         .findFirst());
     }
 
-    /**
-     * Wyszukuje kryterium wyniku.
-     *
-     * @param score wynik
-     * @return opcjonalne kryterium
-     */
+
     private Optional<AssessmentCriterion> findCriterion(StudentScore score) {
         return data.getCriteria().stream()
                 .filter(criterion -> criterion.getId().equals(score.getCriterionId()))
                 .findFirst();
     }
 
-    /**
-     * Wyszukuje przedmiot kryterium.
-     *
-     * @param criterion kryterium
-     * @return opcjonalny przedmiot
-     */
+
     private Optional<Subject> findSubject(AssessmentCriterion criterion) {
         return data.getSubjects().stream()
                 .filter(subject -> subject.getId().equals(criterion.getSubjectId()))
                 .findFirst();
     }
 
-    /**
-     * Sprawdza, czy wiersz spełnia kryterium wyszukiwania.
-     *
-     * @param result wiersz danych
-     * @param query znormalizowane zapytanie
-     * @return {@code true}, gdy dowolne pole zawiera zapytanie
-     */
+
     private static boolean matches(StudentSearchResult result, String query) {
         if (query.isEmpty()) {
             return true;
@@ -146,13 +112,7 @@ public final class SearchService {
                 || contains(result.getCriterionName(), query);
     }
 
-    /**
-     * Sprawdza zawieranie tekstu bez rozróżniania wielkości liter.
-     *
-     * @param value sprawdzany tekst
-     * @param query znormalizowane zapytanie
-     * @return wynik sprawdzenia
-     */
+
     private static boolean contains(String value, String query) {
         return value.toLowerCase(Locale.ROOT).contains(query);
     }

@@ -1,58 +1,42 @@
 package pl.edu.wit.studentmanager.ui.dialog;
 
-import pl.edu.wit.studentmanager.exception.ValidationException;
-import pl.edu.wit.studentmanager.i18n.LanguageManager;
-import pl.edu.wit.studentmanager.model.Student;
-import pl.edu.wit.studentmanager.service.StudentService;
-import pl.edu.wit.studentmanager.ui.UiDialogs;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.Window;
 
-/**
- * Modalny formularz dodawania lub edycji studenta.
- */
+import pl.edu.wit.studentmanager.exception.ValidationException;
+import pl.edu.wit.studentmanager.i18n.LanguageManager;
+import pl.edu.wit.studentmanager.model.Student;
+import pl.edu.wit.studentmanager.service.StudentService;
+import pl.edu.wit.studentmanager.ui.UiDialogs;
+
+
 public final class StudentDialog extends JDialog {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis studentów. */
     private final StudentService studentService;
 
-    /** Edytowany student lub {@code null}. */
     private final Student student;
 
-    /** Pole imienia. */
     private final JTextField firstNameField = new JTextField(24);
 
-    /** Pole nazwiska. */
     private final JTextField lastNameField = new JTextField(24);
 
-    /** Pole numeru albumu. */
     private final JTextField albumField = new JTextField(24);
 
-    /** Informacja, czy dane zapisano. */
     private boolean saved;
 
-    /**
-     * Tworzy dialog studenta.
-     *
-     * @param owner okno nadrzędne
-     * @param languageManager menedżer języka
-     * @param studentService serwis studentów
-     * @param student edytowany student lub {@code null} przy dodawaniu
-     */
+
     public StudentDialog(
             Window owner,
             LanguageManager languageManager,
@@ -70,16 +54,11 @@ public final class StudentDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Zwraca informację, czy operacja została zatwierdzona.
-     *
-     * @return {@code true}, gdy zapis się udał
-     */
+
     public boolean isSaved() {
         return saved;
     }
 
-    /** Buduje interfejs dialogu. */
     private void buildInterface() {
         JPanel form = new JPanel(new GridBagLayout());
         DialogLayout.addRow(form, 0, new JLabel(languageManager.get("field.firstName")), firstNameField);
@@ -101,7 +80,6 @@ public final class StudentDialog extends JDialog {
         getRootPane().setDefaultButton(saveButton);
     }
 
-    /** Wypełnia pola danymi edytowanego studenta. */
     private void fillFields() {
         if (student != null) {
             firstNameField.setText(student.getFirstName());
@@ -110,7 +88,6 @@ public final class StudentDialog extends JDialog {
         }
     }
 
-    /** Próbuje zapisać dane formularza. */
     private void save() {
         try {
             if (student == null) {

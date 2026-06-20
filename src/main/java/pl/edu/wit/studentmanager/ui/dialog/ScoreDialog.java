@@ -1,5 +1,18 @@
 package pl.edu.wit.studentmanager.ui.dialog;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.Window;
+import java.util.Comparator;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import pl.edu.wit.studentmanager.exception.ValidationException;
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.model.AppData;
@@ -11,66 +24,32 @@ import pl.edu.wit.studentmanager.service.ScoreService;
 import pl.edu.wit.studentmanager.service.SubjectService;
 import pl.edu.wit.studentmanager.ui.UiDialogs;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.Window;
-import java.util.Comparator;
 
-/**
- * Dialog dodawania lub edycji punktów studenta.
- */
 public final class ScoreDialog extends JDialog {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Dane aplikacji. */
     private final AppData data;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis punktów. */
     private final ScoreService scoreService;
 
-    /** Serwis przedmiotów. */
     private final SubjectService subjectService;
 
-    /** Edytowany wynik lub {@code null}. */
     private final StudentScore score;
 
-    /** Lista studentów. */
     private final JComboBox<Student> studentCombo = new JComboBox<>();
 
-    /** Lista przedmiotów. */
     private final JComboBox<Subject> subjectCombo = new JComboBox<>();
 
-    /** Lista kryteriów. */
     private final JComboBox<AssessmentCriterion> criterionCombo = new JComboBox<>();
 
-    /** Pole punktów. */
     private final JTextField pointsField = new JTextField(12);
 
-    /** Informacja o zapisaniu. */
     private boolean saved;
 
-    /**
-     * Tworzy dialog punktów.
-     *
-     * @param owner okno nadrzędne
-     * @param data dane aplikacji
-     * @param languageManager menedżer języka
-     * @param scoreService serwis punktów
-     * @param subjectService serwis przedmiotów
-     * @param score edytowany wynik lub {@code null}
-     */
+
     public ScoreDialog(
             Window owner,
             AppData data,
@@ -93,16 +72,11 @@ public final class ScoreDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Zwraca informację o zapisaniu formularza.
-     *
-     * @return {@code true}, gdy zapis się udał
-     */
+
     public boolean isSaved() {
         return saved;
     }
 
-    /** Wypełnia listy studentów i przedmiotów. */
     private void fillCombos() {
         data.getStudents().stream()
                 .sorted(Comparator.comparing(Student::getLastName, String.CASE_INSENSITIVE_ORDER)
@@ -113,7 +87,6 @@ public final class ScoreDialog extends JDialog {
         refreshCriteria();
     }
 
-    /** Buduje interfejs dialogu. */
     private void buildInterface() {
         JPanel form = new JPanel(new GridBagLayout());
         DialogLayout.addRow(form, 0, new JLabel(languageManager.get("label.student")), studentCombo);
@@ -135,7 +108,6 @@ public final class ScoreDialog extends JDialog {
         getRootPane().setDefaultButton(saveButton);
     }
 
-    /** Odświeża kryteria po zmianie przedmiotu. */
     private void refreshCriteria() {
         criterionCombo.removeAllItems();
         Subject subject = (Subject) subjectCombo.getSelectedItem();
@@ -144,7 +116,6 @@ public final class ScoreDialog extends JDialog {
         }
     }
 
-    /** Ustawia wartości podczas edycji istniejącego wyniku. */
     private void fillExistingScore() {
         if (score == null) {
             return;
@@ -169,7 +140,6 @@ public final class ScoreDialog extends JDialog {
         criterionCombo.setEnabled(false);
     }
 
-    /** Próbuje zapisać wynik. */
     private void save() {
         final double points;
         try {

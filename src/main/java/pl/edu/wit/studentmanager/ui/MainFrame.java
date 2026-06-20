@@ -1,5 +1,20 @@
 package pl.edu.wit.studentmanager.ui;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.nio.file.Path;
+import java.util.Locale;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import pl.edu.wit.studentmanager.config.AppConfig;
 import pl.edu.wit.studentmanager.i18n.LanguageManager;
 import pl.edu.wit.studentmanager.i18n.Translatable;
@@ -16,23 +31,6 @@ import pl.edu.wit.studentmanager.ui.panel.ScorePanel;
 import pl.edu.wit.studentmanager.ui.panel.SearchPanel;
 import pl.edu.wit.studentmanager.ui.panel.StudentPanel;
 import pl.edu.wit.studentmanager.ui.panel.SubjectPanel;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.nio.file.Path;
-import java.util.Locale;
-import java.util.concurrent.CompletionException;
 
 /**
  * Główne okno aplikacji, które łączy wszystkie panele funkcjonalne.
@@ -92,17 +90,6 @@ public final class MainFrame extends JFrame implements Translatable {
 
     /**
      * Tworzy główne okno aplikacji.
-     *
-     * @param config konfiguracja
-     * @param data dane aplikacji
-     * @param persistenceService serwis operacji plikowych
-     * @param languageManager menedżer języka
-     * @param studentService serwis studentów
-     * @param groupService serwis grup
-     * @param assignmentService serwis przypisań
-     * @param subjectService serwis przedmiotów
-     * @param scoreService serwis punktów
-     * @param searchService serwis wyszukiwania
      */
     public MainFrame(
             AppConfig config,
@@ -140,7 +127,7 @@ public final class MainFrame extends JFrame implements Translatable {
 
     /** Buduje układ głównego okna. */
     private void buildInterface() {
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(8, 8));
 
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -159,7 +146,7 @@ public final class MainFrame extends JFrame implements Translatable {
         add(tabs, BorderLayout.CENTER);
     }
 
-    /** Rejestruje zdarzenia przycisków, języka i zamykania okna. */
+    /** Rejestruje zdarzenia przycisków i języka. */
     private void registerEvents() {
         saveButton.addActionListener(event -> chooseAndSave());
         loadButton.addActionListener(event -> chooseAndLoad());
@@ -177,18 +164,6 @@ public final class MainFrame extends JFrame implements Translatable {
                 SwingUtilities.invokeLater(this::updateTexts);
             }
         });
-        addWindowListener(new WindowAdapter() {
-            /**
-             * Zamyka pulę wątków przed zamknięciem okna.
-             *
-             * @param event zdarzenie zamknięcia
-             */
-            @Override
-            public void windowClosing(WindowEvent event) {
-                persistenceService.close();
-                dispose();
-            }
-        });
     }
 
     /** Otwiera wybór pliku i rozpoczyna zapis. */
@@ -200,16 +175,17 @@ public final class MainFrame extends JFrame implements Translatable {
         }
         Path path = ensureBinExtension(chooser.getSelectedFile().toPath());
         setFileOperationInProgress(true);
-        persistenceService.saveAsync(path, data).whenComplete((result, error) ->
-                SwingUtilities.invokeLater(() -> {
-                    setFileOperationInProgress(false);
-                    if (error == null) {
-                        UiDialogs.showInformation(this, languageManager, "message.save.success");
-                    } else {
-                        UiDialogs.showError(this, languageManager,
-                                "message.save.error", rootMessage(error));
-                    }
-                }));
+        
+        persistenceService.saveAsync(path, data,
+            () -> SwingUtilities.invokeLater(() -> {
+                setFileOperationInProgress(false);
+                UiDialogs.showInformation(this, languageManager, "message.save.success");
+            }),
+            (error) -> SwingUtilities.invokeLater(() -> {
+                setFileOperationInProgress(false);
+                UiDialogs.showError(this, languageManager, "message.save.error", error.getMessage());
+            })
+        );
     }
 
     /** Otwiera wybór pliku i rozpoczyna odczyt. */
@@ -220,25 +196,22 @@ public final class MainFrame extends JFrame implements Translatable {
             return;
         }
         setFileOperationInProgress(true);
-        persistenceService.loadAsync(chooser.getSelectedFile().toPath()).whenComplete((loaded, error) ->
-                SwingUtilities.invokeLater(() -> {
-                    setFileOperationInProgress(false);
-                    if (error == null) {
-                        data.replaceWith(loaded);
-                        refreshAll();
-                        UiDialogs.showInformation(this, languageManager, "message.load.success");
-                    } else {
-                        UiDialogs.showError(this, languageManager,
-                                "message.load.error", rootMessage(error));
-                    }
-                }));
+        
+        persistenceService.loadAsync(chooser.getSelectedFile().toPath(),
+            (loaded) -> SwingUtilities.invokeLater(() -> {
+                setFileOperationInProgress(false);
+                data.replaceWith(loaded);
+                refreshAll();
+                UiDialogs.showInformation(this, languageManager, "message.load.success");
+            }),
+            (error) -> SwingUtilities.invokeLater(() -> {
+                setFileOperationInProgress(false);
+                UiDialogs.showError(this, languageManager, "message.load.error", error.getMessage());
+            })
+        );
     }
 
-    /**
-     * Tworzy skonfigurowany wybór pliku binarnego.
-     *
-     * @return wybór pliku
-     */
+    /** Tworzy skonfigurowany wybór pliku binarnego. */
     private JFileChooser createFileChooser() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter(
@@ -246,12 +219,7 @@ public final class MainFrame extends JFrame implements Translatable {
         return chooser;
     }
 
-    /**
-     * Dodaje rozszerzenie .bin, gdy użytkownik go nie podał.
-     *
-     * @param path wybrana ścieżka
-     * @return ścieżka z rozszerzeniem
-     */
+    /** Dodaje rozszerzenie .bin, gdy użytkownik go nie podał. */
     private static Path ensureBinExtension(Path path) {
         String fileName = path.getFileName().toString();
         if (fileName.toLowerCase(Locale.ROOT).endsWith(".bin")) {
@@ -260,26 +228,7 @@ public final class MainFrame extends JFrame implements Translatable {
         return path.resolveSibling(fileName + ".bin");
     }
 
-    /**
-     * Zwraca komunikat najgłębszej przyczyny wyjątku asynchronicznego.
-     *
-     * @param throwable wyjątek
-     * @return komunikat
-     */
-    private static String rootMessage(Throwable throwable) {
-        Throwable current = throwable;
-        while ((current instanceof CompletionException || current.getCause() != null)
-                && current.getCause() != null) {
-            current = current.getCause();
-        }
-        return current.getMessage() == null ? current.getClass().getSimpleName() : current.getMessage();
-    }
-
-    /**
-     * Włącza lub wyłącza stan operacji plikowej.
-     *
-     * @param inProgress czy operacja trwa
-     */
+    /** Włącza lub wyłącza stan operacji plikowej. */
     private void setFileOperationInProgress(boolean inProgress) {
         saveButton.setEnabled(!inProgress);
         loadButton.setEnabled(!inProgress);
@@ -287,20 +236,20 @@ public final class MainFrame extends JFrame implements Translatable {
                 ? languageManager.get("message.operation.inProgress") : " ");
     }
 
-    /** Odświeża dane wszystkich paneli. */
+/** Odświeża dane wszystkich paneli. */
     public void refreshAll() {
         studentPanel.refreshData();
         groupPanel.refreshData();
         subjectPanel.refreshData();
         scorePanel.refreshData();
-        searchPanel.refreshData();
+        searchPanel.refreshData(); // Zmień z refreshPanel() z powrotem na refreshData()
     }
 
     /** Aktualizuje wszystkie teksty głównego okna. */
     @Override
     public void updateTexts() {
         setTitle(languageManager.get("app.title"));
-        saveButton.setText(languageManager.get("button.save"));
+        saveButton.setText(languageManager.get("button.save.file")); // ZMIENIONO: używa teraz dedykowanego klucza pliku
         loadButton.setText(languageManager.get("button.load"));
         languageLabel.setText(languageManager.get("label.language"));
 

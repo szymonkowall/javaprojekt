@@ -1,60 +1,48 @@
 package pl.edu.wit.studentmanager.ui.dialog;
 
-import pl.edu.wit.studentmanager.exception.ValidationException;
-import pl.edu.wit.studentmanager.i18n.LanguageManager;
-import pl.edu.wit.studentmanager.model.AssessmentCriterion;
-import pl.edu.wit.studentmanager.service.SubjectService;
-import pl.edu.wit.studentmanager.ui.UiDialogs;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.util.UUID;
 
-/**
- * Modalny formularz kryterium oceniania.
- */
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import pl.edu.wit.studentmanager.exception.ValidationException;
+import pl.edu.wit.studentmanager.i18n.LanguageManager;
+import pl.edu.wit.studentmanager.model.AssessmentCriterion;
+import pl.edu.wit.studentmanager.service.SubjectService;
+import pl.edu.wit.studentmanager.ui.UiDialogs;
+
+
 public final class CriterionDialog extends JDialog {
 
-    /** Numer wersji klasy. */
+
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
+  
     private final LanguageManager languageManager;
 
-    /** Serwis przedmiotów. */
+  
     private final SubjectService subjectService;
 
-    /** Identyfikator przedmiotu. */
+
     private final UUID subjectId;
 
-    /** Edytowane kryterium lub {@code null}. */
+
     private final AssessmentCriterion criterion;
 
-    /** Pole nazwy. */
     private final JTextField nameField = new JTextField(24);
 
-    /** Pole maksimum punktów. */
     private final JTextField maximumField = new JTextField(12);
 
-    /** Informacja o zapisaniu. */
     private boolean saved;
 
-    /**
-     * Tworzy dialog kryterium.
-     *
-     * @param owner okno nadrzędne
-     * @param languageManager menedżer języka
-     * @param subjectService serwis przedmiotów
-     * @param subjectId identyfikator przedmiotu
-     * @param criterion edytowane kryterium lub {@code null}
-     */
+
     public CriterionDialog(
             Window owner,
             LanguageManager languageManager,
@@ -74,16 +62,10 @@ public final class CriterionDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Zwraca informację o zapisaniu formularza.
-     *
-     * @return {@code true}, gdy zapis się udał
-     */
     public boolean isSaved() {
         return saved;
     }
 
-    /** Buduje interfejs dialogu. */
     private void buildInterface() {
         JPanel form = new JPanel(new GridBagLayout());
         DialogLayout.addRow(form, 0, new JLabel(languageManager.get("field.criterionName")), nameField);
@@ -103,7 +85,6 @@ public final class CriterionDialog extends JDialog {
         getRootPane().setDefaultButton(saveButton);
     }
 
-    /** Wypełnia formularz. */
     private void fillFields() {
         if (criterion != null) {
             nameField.setText(criterion.getName());
@@ -111,7 +92,6 @@ public final class CriterionDialog extends JDialog {
         }
     }
 
-    /** Próbuje zapisać dane. */
     private void save() {
         final double maximum;
         try {

@@ -1,10 +1,9 @@
 package pl.edu.wit.studentmanager.ui.dialog;
 
-import pl.edu.wit.studentmanager.exception.ValidationException;
-import pl.edu.wit.studentmanager.i18n.LanguageManager;
-import pl.edu.wit.studentmanager.model.Subject;
-import pl.edu.wit.studentmanager.service.SubjectService;
-import pl.edu.wit.studentmanager.ui.UiDialogs;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,45 +12,31 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.Window;
 
-/**
- * Modalny formularz dodawania lub edycji przedmiotu.
- */
+import pl.edu.wit.studentmanager.exception.ValidationException;
+import pl.edu.wit.studentmanager.i18n.LanguageManager;
+import pl.edu.wit.studentmanager.model.Subject;
+import pl.edu.wit.studentmanager.service.SubjectService;
+import pl.edu.wit.studentmanager.ui.UiDialogs;
+
+
 public final class SubjectDialog extends JDialog {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis przedmiotów. */
     private final SubjectService subjectService;
 
-    /** Edytowany przedmiot lub {@code null}. */
     private final Subject subject;
 
-    /** Pole nazwy. */
     private final JTextField nameField = new JTextField(24);
 
-    /** Pole opisu. */
     private final JTextArea descriptionArea = new JTextArea(4, 24);
 
-    /** Informacja o zapisaniu. */
     private boolean saved;
 
-    /**
-     * Tworzy dialog przedmiotu.
-     *
-     * @param owner okno nadrzędne
-     * @param languageManager menedżer języka
-     * @param subjectService serwis przedmiotów
-     * @param subject edytowany przedmiot lub {@code null}
-     */
+
     public SubjectDialog(
             Window owner,
             LanguageManager languageManager,
@@ -68,11 +53,7 @@ public final class SubjectDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Zwraca informację o zapisaniu formularza.
-     *
-     * @return {@code true}, gdy zapis się udał
-     */
+
     public boolean isSaved() {
         return saved;
     }
@@ -100,7 +81,6 @@ public final class SubjectDialog extends JDialog {
         getRootPane().setDefaultButton(saveButton);
     }
 
-    /** Wypełnia formularz. */
     private void fillFields() {
         if (subject != null) {
             nameField.setText(subject.getName());
@@ -108,7 +88,6 @@ public final class SubjectDialog extends JDialog {
         }
     }
 
-    /** Próbuje zapisać dane. */
     private void save() {
         try {
             if (subject == null) {

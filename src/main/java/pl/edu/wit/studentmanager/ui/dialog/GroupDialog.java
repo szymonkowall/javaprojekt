@@ -1,10 +1,9 @@
 package pl.edu.wit.studentmanager.ui.dialog;
 
-import pl.edu.wit.studentmanager.exception.ValidationException;
-import pl.edu.wit.studentmanager.i18n.LanguageManager;
-import pl.edu.wit.studentmanager.model.StudentGroup;
-import pl.edu.wit.studentmanager.service.GroupService;
-import pl.edu.wit.studentmanager.ui.UiDialogs;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,48 +12,33 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.Window;
 
-/**
- * Modalny formularz dodawania lub edycji grupy.
- */
+import pl.edu.wit.studentmanager.exception.ValidationException;
+import pl.edu.wit.studentmanager.i18n.LanguageManager;
+import pl.edu.wit.studentmanager.model.StudentGroup;
+import pl.edu.wit.studentmanager.service.GroupService;
+import pl.edu.wit.studentmanager.ui.UiDialogs;
+
+
 public final class GroupDialog extends JDialog {
 
-    /** Numer wersji klasy. */
     private static final long serialVersionUID = 1L;
 
-    /** Menedżer języka. */
     private final LanguageManager languageManager;
 
-    /** Serwis grup. */
     private final GroupService groupService;
 
-    /** Edytowana grupa lub {@code null}. */
     private final StudentGroup group;
 
-    /** Pole kodu grupy. */
     private final JTextField codeField = new JTextField(24);
 
-    /** Pole specjalizacji. */
     private final JTextField specializationField = new JTextField(24);
 
-    /** Pole opisu. */
     private final JTextArea descriptionArea = new JTextArea(4, 24);
 
-    /** Informacja o poprawnym zapisie. */
     private boolean saved;
 
-    /**
-     * Tworzy dialog grupy.
-     *
-     * @param owner okno nadrzędne
-     * @param languageManager menedżer języka
-     * @param groupService serwis grup
-     * @param group edytowana grupa lub {@code null}
-     */
+
     public GroupDialog(
             Window owner,
             LanguageManager languageManager,
@@ -71,16 +55,11 @@ public final class GroupDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Zwraca informację o zapisaniu formularza.
-     *
-     * @return {@code true}, gdy zapis się udał
-     */
+
     public boolean isSaved() {
         return saved;
     }
 
-    /** Buduje interfejs dialogu. */
     private void buildInterface() {
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
@@ -104,7 +83,6 @@ public final class GroupDialog extends JDialog {
         getRootPane().setDefaultButton(saveButton);
     }
 
-    /** Wypełnia formularz danymi grupy. */
     private void fillFields() {
         if (group != null) {
             codeField.setText(group.getCode());
@@ -113,7 +91,6 @@ public final class GroupDialog extends JDialog {
         }
     }
 
-    /** Próbuje zapisać dane. */
     private void save() {
         try {
             if (group == null) {
